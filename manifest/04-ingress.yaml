@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: youngil
+  name: youngil
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: youngil-alb
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+spec: 
+  rules:
+    - host: api.kyiajm.link
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend-port-8080
+                port:
+                  number: 8080
+    - host: www.kyiajm.link
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend-port-80
+                port:
+                  number: 80
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: frontend-port-80
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - kyiajm.link
+      secretName: tls-secret
+

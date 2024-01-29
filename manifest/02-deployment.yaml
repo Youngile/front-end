@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: youngil
+  name: frontend-port-80
+spec:
+  revisionHistoryLimit: 5
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frontend-port-80
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: frontend-port-80
+    spec:
+      containers:
+        - name: frontend-port-80
+          image: "457017831224.dkr.ecr.ap-northeast-2.amazonaws.com/youngiltest:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP

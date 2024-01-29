@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: youngil
+  name: frontend-port-80
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: frontend-port-80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: youngil
+  name: backend-port-8080
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: "/api/v1/healthz"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: backend-port-8080
+
