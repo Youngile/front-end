@@ -27,10 +27,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Get short Git commit hash
-      id: git-hash
-      run: echo "::set-output name=hash::$(git rev-parse --short HEAD)"
-
     - name: Build, tag, and push the image to Amazon ECR
       id: build-image
       env:
