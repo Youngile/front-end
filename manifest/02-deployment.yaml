@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: frontend-port-80
-          image: "457017831224.dkr.ecr.ap-northeast-2.amazonaws.com/youngiltest:${{ steps.build-image.outputs.imageTag }}"
+          image: "457017831224.dkr.ecr.ap-northeast-2.amazonaws.com/youngiltest:${{ github.sha }}"
           imagePullPolicy: Always
           ports:
             - name: http
