@@ -26,41 +26,41 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-
+   
+     # Build, tag, and push the image to Amazon ECR
     - name: Build, tag, and push the image to Amazon ECR
       id: build-image
-      env:
+      env: 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: "youngiltest"
-        IMAGE_TAG: "latest"
         GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-        
+  
       run: |
+        # Use the GitHub SHA as a unique identifier for the image tag
+        IMAGE_TAG="${{ github.sha }}"
+  
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "Pushing image to ECR..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-  
-    - name: Configure Git user identity
-      run: |
-        git config --global user.email "ddffgghh22@naver.com"
-        git config --global user.name "Youngile"  
+        echo "::set-output name=imageTag::$IMAGE_TAG"
 
-    - name: Debug sed command result
-      run: cat manifest/02-deployment.yaml
-      
+
+
+      # Update Kubernetes Deployment YAML
     - name: Update Kubernetes Deployment YAML
       run: |
         if [[ -n $(git diff --stat) ]]; then
           git pull origin main
-          sed -i "s|image: .*|image: \"457017831224.dkr.ecr.ap-northeast-2.amazonaws.com/youngiltest:latest\"|" manifest/02-deployment.yaml
+    
+   
+          sed -i "s|image: .*|image: \"$ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.build-image.outputs.imageTag }}\"|" manifest/02-deployment.yaml
+    
           git add manifest/02-deployment.yaml
           git status
           git diff
-          git commit -m "Update image tag to latest"
+          git commit -m "Update image tag to $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.build-image.outputs.imageTag }}"
           git push origin main
         else
           echo "No changes to commit"
         fi
-    
-      
