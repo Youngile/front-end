@@ -5,7 +5,7 @@ metadata:
   name: frontend-port-80
 spec:
   revisionHistoryLimit: 5
-  replicas: 3
+  replicas: 4
   strategy:
     type: RollingUpdate
     rollingUpdate:
