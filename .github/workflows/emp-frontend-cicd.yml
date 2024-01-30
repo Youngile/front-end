@@ -46,7 +46,7 @@ jobs:
           if [[ -n $(git diff --stat) ]]; then
           git pull origin main
     
-          SHA="${{ github.sha }}"
+          SHA="fa33c9fa8e7163a57dcb71633a35300448f077f5"
    
           sed -i "s|image: .*|image: \"$ECR_REGISTRY/$ECR_REPOSITORY:$SHA\"|" manifest/02-deployment.yaml
     
