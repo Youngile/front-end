@@ -51,6 +51,7 @@ jobs:
       
     - name: Update Kubernetes Deployment YAML
       run: |
+          git pull origin main
           sed -i "s|image: .*|image: \"457017831224.dkr.ecr.ap-northeast-2.amazonaws.com/youngiltest:latest\"|" manifest/02-deployment.yaml
           git add manifest/02-deployment.yaml
           git status
