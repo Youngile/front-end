@@ -41,3 +41,17 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=imageTag::$IMAGE_TAG"
+      - name: Update Kubernetes Deployment YAML
+        run: |
+          if [[ -n $(git diff --stat) ]]; then
+          git pull origin main
+    
+          SHA="${{ github.sha }}"
+   
+          sed -i "s|image: .*|image: \"$ECR_REGISTRY/$ECR_REPOSITORY:$SHA\"|" manifest/02-deployment.yaml
+    
+          git add manifest/02-deployment.yaml
+          git status
+          git diff
+          git commit -m "Update image tag to $ECR_REGISTRY/$ECR_REPOSITORY:$SHA"
+          git push origin main
